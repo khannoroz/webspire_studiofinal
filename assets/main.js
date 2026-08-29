@@ -149,15 +149,107 @@ document.querySelectorAll('.project-slider').forEach(slider => {
   goTo(0);
 });
 
-// ============ Contact form ============
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-  contactForm.addEventListener('submit', (e) => {
+// ============ Forms (contact, home, quote — any .ajax-form) ============
+document.querySelectorAll('.ajax-form').forEach(form => {
+  form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const success = document.querySelector('.form-success');
-    success.classList.add('show');
-    contactForm.reset();
-    success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    const success = form.querySelector('.form-success');
+    if (success) success.classList.add('show');
+    form.reset();
+    if (success) success.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+});
+
+// ============ Hero motion banner (canvas network animation) ============
+// Stands in for a literal video file: a lightweight, on-theme animated
+// background (no external asset, no licensing risk, near-zero page weight).
+// Drop a real <video> into .hero-video-bg later and this canvas can be removed.
+const heroCanvas = document.querySelector('.hero-video-bg canvas');
+if (heroCanvas) {
+  const ctx = heroCanvas.getContext('2d');
+  const wrap = heroCanvas.parentElement;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let w, h, dpr;
+  let nodes = [];
+
+  function sizeCanvas() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = wrap.clientWidth;
+    h = wrap.clientHeight;
+    heroCanvas.width = w * dpr;
+    heroCanvas.height = h * dpr;
+    heroCanvas.style.width = w + 'px';
+    heroCanvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function makeNodes() {
+    const count = Math.round((w * h) / 20000);
+    nodes = Array.from({ length: Math.max(24, Math.min(count, 90)) }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.8 + 1
+    }));
+  }
+
+  function frame() {
+    ctx.clearRect(0, 0, w, h);
+    const linkDist = Math.min(160, w / 6);
+    for (let i = 0; i < nodes.length; i++) {
+      const n = nodes[i];
+      n.x += n.vx; n.y += n.vy;
+      if (n.x < 0 || n.x > w) n.vx *= -1;
+      if (n.y < 0 || n.y > h) n.vy *= -1;
+      for (let j = i + 1; j < nodes.length; j++) {
+        const o = nodes[j];
+        const dx = n.x - o.x, dy = n.y - o.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < linkDist) {
+          ctx.strokeStyle = `rgba(163,230,53,${(1 - dist / linkDist) * 0.32})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(n.x, n.y);
+          ctx.lineTo(o.x, o.y);
+          ctx.stroke();
+        }
+      }
+    }
+    nodes.forEach(n => {
+      ctx.fillStyle = 'rgba(245,245,245,0.8)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(163,230,53,0.35)';
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, n.r * 2.4, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    if (!reduceMotion) requestAnimationFrame(frame);
+  }
+
+  sizeCanvas();
+  makeNodes();
+  frame();
+  window.addEventListener('resize', () => { sizeCanvas(); makeNodes(); if (reduceMotion) frame(); }, { passive: true });
+}
+
+// ============ Portfolio category filter ============
+const filterBar = document.querySelector('.portfolio-filters');
+if (filterBar) {
+  const buttons = Array.from(filterBar.querySelectorAll('[data-filter]'));
+  const cards = Array.from(document.querySelectorAll('.project-card'));
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.dataset.filter;
+      cards.forEach(card => {
+        const match = filter === 'all' || card.dataset.category === filter;
+        card.style.display = match ? '' : 'none';
+      });
+    });
   });
 }
 
