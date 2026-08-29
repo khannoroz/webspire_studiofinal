@@ -50,34 +50,6 @@
   </div>
 </header>
 
-<!-- History -->
-<section>
-  <div class="container">
-    <div class="section-head reveal">
-      <span class="eyebrow">History</span>
-      <h2>From a two-person freelance team to a full-service studio.</h2>
-    </div>
-    <div class="timeline">
-      <div class="tl-item reveal">
-        <div class="tl-year">2018</div>
-        <div><h3>Founded in a spare room</h3><p>Webspire began as a two-person operation taking on small business websites, focused entirely on speed and clarity over decoration.</p></div>
-      </div>
-      <div class="tl-item reveal">
-        <div class="tl-year">2020</div>
-        <div><h3>First e-commerce clients</h3><p>We expanded into online retail as demand shifted, building storefronts engineered for checkout completion, not just visual appeal.</p></div>
-      </div>
-      <div class="tl-item reveal">
-        <div class="tl-year">2022</div>
-        <div><h3>In-house design & dev pods</h3><p>Grew into a structured studio with dedicated design, engineering and QA functions working from a single shared roadmap.</p></div>
-      </div>
-      <div class="tl-item reveal">
-        <div class="tl-year">2026</div>
-        <div><h3>4200+ projects delivered</h3><p>Today Webspire partners with founders and marketing teams across industries, from early-stage launches to established platform rebuilds.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- Mission & values -->
 <section style="background:var(--void);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
   <div class="container">
@@ -151,6 +123,53 @@
     <a href="contact.html" class="btn btn-dark">Get A Free Quote
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
     </a>
+  </div>
+</section>
+
+<!-- ===================== GET A QUOTE ===================== -->
+<section class="quote-section">
+  <div class="container quote-inner">
+    <div class="quote-copy reveal">
+      <span class="eyebrow">Get A Quote</span>
+      <h2>Tell us about your project and we'll send a quote.</h2>
+      <p>Share a few details below — no commitment, just a clear, fast estimate from our team.</p>
+    </div>
+    <div class="reveal">
+      <form class="ajax-form quote-form" id="quote-form">
+        <div class="form-row-3">
+          <div class="form-field">
+            <label for="q-name">Full Name</label>
+            <input type="text" id="q-name" name="name" placeholder="Jordan Malik" required>
+          </div>
+          <div class="form-field">
+            <label for="q-email">Email Address</label>
+            <input type="email" id="q-email" name="email" placeholder="you@company.com" required>
+          </div>
+          <div class="form-field">
+            <label for="q-type">Project Type</label>
+            <select id="q-type" name="project_type" required>
+              <option value="" disabled selected>Select one</option>
+              <option>Website</option>
+              <option>E-Commerce</option>
+              <option>UI/UX Design</option>
+              <option>Maintenance</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="q-message">Project Details</label>
+          <textarea id="q-message" name="message" rows="4" placeholder="Briefly describe what you need..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Request A Quote
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <div class="form-success">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Thanks — your quote request is in. We'll follow up within one business day.</span>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 
