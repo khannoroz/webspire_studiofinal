@@ -53,28 +53,20 @@
 <section class="section-tight">
   <div class="container contact-grid">
     <!-- Info column -->
-    <div class="reveal">
-      <div class="contact-info-card">
+    <div class="reveal contact-plain">
+      <div>
         <h4>Email Us</h4>
-        <a href="mailto:hello@webspirestudio.com" class="big">hello@webspirestudio.com</a>
+        <a href="mailto:hello@webspirestudio.com">hello@webspirestudio.com</a>
       </div>
-      <div class="contact-info-card">
+      <div>
         <h4>Call Us</h4>
-        <a href="tel:+923001234567" class="big">+92 300 1234567</a>
-      </div>
-      <div class="contact-info-card">
-        <h4>Studio</h4>
-        <p>Shahrah-e-Faisal, Karachi, Pakistan<br><span class="text-mist" style="font-size:14px;">Remote-first, working with clients worldwide</span></p>
-      </div>
-      <div class="contact-info-card">
-        <h4>Response Time</h4>
-        <p>Within 1 business day</p>
+        <a href="tel:+923001234567">+92 300 1234567</a>
       </div>
     </div>
 
     <!-- Form column -->
     <div class="reveal">
-      <form id="contact-form">
+      <form id="contact-form" class="ajax-form">
         <div class="form-row">
           <div class="form-field">
             <label for="name">Full Name</label>
@@ -113,6 +105,53 @@
     <span>Webspire Studio</span>
   </div>
 </div>
+
+<!-- ===================== GET A QUOTE ===================== -->
+<section class="quote-section">
+  <div class="container quote-inner">
+    <div class="quote-copy reveal">
+      <span class="eyebrow">Get A Quote</span>
+      <h2>Prefer a fast estimate instead of the full form above?</h2>
+      <p>Give us the basics here and we'll come back with a quote — no need to fill out the longer form.</p>
+    </div>
+    <div class="reveal">
+      <form class="ajax-form quote-form" id="quote-form">
+        <div class="form-row-3">
+          <div class="form-field">
+            <label for="q-name">Full Name</label>
+            <input type="text" id="q-name" name="name" placeholder="Jordan Malik" required>
+          </div>
+          <div class="form-field">
+            <label for="q-email">Email Address</label>
+            <input type="email" id="q-email" name="email" placeholder="you@company.com" required>
+          </div>
+          <div class="form-field">
+            <label for="q-type">Project Type</label>
+            <select id="q-type" name="project_type" required>
+              <option value="" disabled selected>Select one</option>
+              <option>Website</option>
+              <option>E-Commerce</option>
+              <option>UI/UX Design</option>
+              <option>Maintenance</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="q-message">Project Details</label>
+          <textarea id="q-message" name="message" rows="4" placeholder="Briefly describe what you need..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Request A Quote
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </button>
+        <div class="form-success">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>
+          <span>Thanks — your quote request is in. We'll follow up within one business day.</span>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
 
 <footer>
   <div class="container">
