@@ -205,6 +205,15 @@ section{position:relative;padding:120px 0;}
 
 /* ---------- Hero w/ cursor spotlight ---------- */
 .hero{padding:180px 0 120px;position:relative;overflow:hidden;background:var(--ink);}
+/* Motion banner: animated canvas standing in for a video background.
+   Sits behind everything else in the hero, with a dark scrim on top so
+   copy stays readable. Swap in a real <video> here later if needed. */
+.hero-video-bg{position:absolute;inset:0;z-index:0;overflow:hidden;background:var(--ink);}
+.hero-video-bg canvas{position:absolute;inset:0;display:block;}
+.hero-video-bg::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(180deg, rgba(10,10,11,.35) 0%, rgba(10,10,11,.6) 55%, var(--ink) 100%);
+}
 .hero-spotlight{
   position:absolute;inset:0;pointer-events:none;z-index:1;
   background:radial-gradient(560px circle at var(--mx,50%) var(--my,20%), rgba(163,230,53,.10), transparent 70%);
@@ -358,6 +367,15 @@ section{position:relative;padding:120px 0;}
 .cta-inner{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:40px;flex-wrap:wrap;}
 .cta-inner h2{font-size:clamp(28px,3.6vw,42px);max-width:600px;color:var(--ink);}
 
+/* Home page CTA band variant: laptop photo instead of a flat lime fill.
+   Page-specific (not applied to .cta-band on other pages). */
+.cta-photo{
+  background:linear-gradient(120deg, rgba(10,10,11,.92) 0%, rgba(10,10,11,.55) 45%, rgba(10,10,11,.85) 100%),
+    url('https://images.unsplash.com/photo-1517694712202-14dd9538aa97?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
+}
+.cta-photo .grid-bg{display:none;}
+.cta-photo .cta-inner h2{color:var(--white);}
+
 /* ---------- Footer ---------- */
 footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30px;}
 .footer-top{display:grid;grid-template-columns:minmax(0,1.4fr) repeat(3,minmax(0,1fr));gap:50px;padding-bottom:60px;}
@@ -430,6 +448,16 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
 .process-cell p{color:var(--mist);font-size:14px;}
 
 /* ---------- Portfolio page: project cards w/ image slider ---------- */
+.portfolio-filters{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:40px;}
+.portfolio-filters button{
+  font-family:var(--font-mono);font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;
+  padding:11px 20px;background:var(--glass);border:1px solid var(--glass-border);color:var(--mist);
+  backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
+  transition:all .3s ease;
+}
+.portfolio-filters button:hover{border-color:var(--glass-border-hover);color:var(--white);}
+.portfolio-filters button.active{background:var(--lime);border-color:var(--lime);color:var(--ink);}
+
 .project-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:32px;}
 .project-card{
   border:1px solid var(--line);background:var(--charcoal-2);overflow:hidden;
@@ -447,9 +475,6 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
 }
 .slider-slides img.active{opacity:1;}
 .project-card:hover .slider-slides img.active{filter:grayscale(0);}
-.project-slider::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg, transparent 55%, rgba(10,10,11,.75) 100%);pointer-events:none;}
-
-.slider-badge{position:absolute;top:16px;left:16px;z-index:3;background:rgba(10,10,11,.6);backdrop-filter:var(--blur);border:1px solid var(--glass-border);color:var(--lime);font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:6px 11px;}
 
 .slider-arrow{
   position:absolute;top:50%;transform:translateY(-50%);z-index:3;
@@ -481,6 +506,12 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
 .contact-info-card a{transition:color .25s ease;display:inline-block;max-width:100%;}
 .contact-info-card a:hover{color:var(--lime);}
 .contact-info-card .big{font-family:var(--font-display);font-size:22px;}
+
+/* Plain (box-free) contact info — no card, no border, just spaced text */
+.contact-plain{display:flex;flex-direction:column;gap:36px;}
+.contact-plain h4{font-family:var(--font-mono);font-size:12.5px;color:var(--mist);letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px;}
+.contact-plain a{font-family:var(--font-display);font-size:26px;transition:color .25s ease;overflow-wrap:anywhere;word-break:break-word;}
+.contact-plain a:hover{color:var(--lime);}
 .form-field{margin-bottom:26px;}
 .form-field label{display:block;font-family:var(--font-mono);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mist);margin-bottom:12px;}
 .form-field input,.form-field textarea{width:100%;background:var(--glass);border:1px solid var(--glass-border);color:var(--white);font-family:var(--font-body);font-size:16px;padding:14px 16px;transition:border-color .3s ease,background .3s ease;resize:none;}
@@ -498,6 +529,22 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
 @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
 .map-pin span{font-family:var(--font-mono);font-size:12.5px;color:var(--mist);letter-spacing:.05em;}
 
+/* ---------- Sitewide quote-request section (above footer, every page) ---------- */
+.quote-section{background:var(--void);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
+.quote-inner{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:60px;align-items:center;}
+.quote-copy h2{font-size:clamp(26px,3vw,36px);}
+.quote-copy p{color:var(--mist);margin-top:16px;font-size:15.5px;max-width:420px;}
+.quote-form .form-row-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;}
+.quote-form select{
+  width:100%;background:var(--glass);border:1px solid var(--glass-border);color:var(--white);
+  font-family:var(--font-body);font-size:16px;padding:14px 16px;transition:border-color .3s ease,background .3s ease;
+  appearance:none;-webkit-appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f5f5f5' stroke-width='2.4'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;background-size:16px;
+}
+.quote-form select:focus{outline:none;border-color:var(--lime);background-color:rgba(163,230,53,.04);}
+.home-contact-inner{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:60px;align-items:center;}
+
 /* ---------- Responsive ---------- */
 
 /* Laptop / small desktop */
@@ -509,7 +556,8 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
 @media (max-width:1080px){
   .grid-3,.value-row,.process-row{grid-template-columns:repeat(2,minmax(0,1fr));}
   .footer-top{grid-template-columns:repeat(2,minmax(0,1fr));row-gap:44px;}
-  .about-split,.contact-grid,.usp-row{grid-template-columns:minmax(0,1fr);}
+  .about-split,.contact-grid,.usp-row,.quote-inner,.home-contact-inner{grid-template-columns:minmax(0,1fr);}
+  .quote-form .form-row-3{grid-template-columns:repeat(2,minmax(0,1fr));}
   .hero-inner{grid-template-columns:minmax(0,1fr);}
   .hero-stats{flex-direction:row;border-left:none;border-top:1px solid var(--line);padding-left:0;padding-top:30px;gap:40px;flex-wrap:wrap;}
   .grid-pricing{grid-template-columns:minmax(0,1fr);max-width:440px;margin:0 auto;}
@@ -553,6 +601,9 @@ footer{background:var(--void);border-top:1px solid var(--line);padding:80px 0 30
   .cta-inner{flex-direction:column;align-items:flex-start;gap:28px;}
   .cta-inner h2{font-size:clamp(24px,7vw,34px);}
   .form-row{grid-template-columns:minmax(0,1fr);}
+  .quote-form .form-row-3{grid-template-columns:minmax(0,1fr);}
+  .portfolio-filters{gap:8px;}
+  .portfolio-filters button{padding:9px 14px;font-size:11.5px;}
   .footer-top{grid-template-columns:minmax(0,1fr);gap:36px;}
   .footer-bottom{flex-direction:column;align-items:flex-start;}
   .tl-item{grid-template-columns:minmax(0,1fr);gap:10px;}
