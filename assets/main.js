@@ -160,80 +160,64 @@ document.querySelectorAll('.ajax-form').forEach(form => {
   });
 });
 
-// ============ Hero motion banner (canvas network animation) ============
-// Stands in for a literal video file: a lightweight, on-theme animated
-// background (no external asset, no licensing risk, near-zero page weight).
-// Drop a real <video> into .hero-video-bg later and this canvas can be removed.
-const heroCanvas = document.querySelector('.hero-video-bg canvas');
-if (heroCanvas) {
-  const ctx = heroCanvas.getContext('2d');
-  const wrap = heroCanvas.parentElement;
+// ============ Hero video banner (respect reduced-motion + force autoplay) ============
+(function () {
+  const heroVideo = document.querySelector('.hero-video-bg video');
+  if (!heroVideo) return;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let w, h, dpr;
-  let nodes = [];
-
-  function sizeCanvas() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = wrap.clientWidth;
-    h = wrap.clientHeight;
-    heroCanvas.width = w * dpr;
-    heroCanvas.height = h * dpr;
-    heroCanvas.style.width = w + 'px';
-    heroCanvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (reduceMotion) {
+    heroVideo.removeAttribute('autoplay');
+    heroVideo.pause();
+    return;
   }
 
-  function makeNodes() {
-    const count = Math.round((w * h) / 20000);
-    nodes = Array.from({ length: Math.max(24, Math.min(count, 90)) }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.3,
-      r: Math.random() * 1.8 + 1
-    }));
+  // Belt-and-braces autoplay: some setups (most commonly a page opened
+  // straight from disk via file:// rather than a real http(s) site) can be
+  // stricter about starting video without a user gesture. This makes sure
+  // the banner starts and KEEPS playing no matter what:
+  //  1) force muted (required for any autoplay to be allowed at all)
+  //  2) try to play immediately, and again as soon as data is ready
+  //  3) a watchdog re-checks every second for the first 20s and nudges
+  //     play() again if something paused it
+  //  4) instantly resumes on the very first interaction anywhere on the
+  //     page, as a final guaranteed fallback
+  //  5) if anything external ever pauses it after that, resume automatically
+  heroVideo.muted = true;
+  heroVideo.defaultMuted = true;
+
+  function tryPlay() {
+    const p = heroVideo.play();
+    if (p && typeof p.catch === 'function') p.catch(() => {});
   }
 
-  function frame() {
-    ctx.clearRect(0, 0, w, h);
-    const linkDist = Math.min(160, w / 6);
-    for (let i = 0; i < nodes.length; i++) {
-      const n = nodes[i];
-      n.x += n.vx; n.y += n.vy;
-      if (n.x < 0 || n.x > w) n.vx *= -1;
-      if (n.y < 0 || n.y > h) n.vy *= -1;
-      for (let j = i + 1; j < nodes.length; j++) {
-        const o = nodes[j];
-        const dx = n.x - o.x, dy = n.y - o.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < linkDist) {
-          ctx.strokeStyle = `rgba(163,230,53,${(1 - dist / linkDist) * 0.32})`;
-          ctx.lineWidth = 1;
-          ctx.beginPath();
-          ctx.moveTo(n.x, n.y);
-          ctx.lineTo(o.x, o.y);
-          ctx.stroke();
-        }
-      }
-    }
-    nodes.forEach(n => {
-      ctx.fillStyle = 'rgba(245,245,245,0.8)';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.fillStyle = 'rgba(163,230,53,0.35)';
-      ctx.beginPath();
-      ctx.arc(n.x, n.y, n.r * 2.4, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    if (!reduceMotion) requestAnimationFrame(frame);
-  }
+  tryPlay();
+  heroVideo.addEventListener('loadedmetadata', tryPlay);
+  heroVideo.addEventListener('loadeddata', tryPlay);
+  heroVideo.addEventListener('canplay', tryPlay);
+  heroVideo.addEventListener('canplaythrough', tryPlay);
 
-  sizeCanvas();
-  makeNodes();
-  frame();
-  window.addEventListener('resize', () => { sizeCanvas(); makeNodes(); if (reduceMotion) frame(); }, { passive: true });
-}
+  // Keep nudging it for the first 20 seconds in case the earliest attempts
+  // were blocked before the browser was ready to allow playback.
+  let watchdogTicks = 0;
+  const watchdog = setInterval(() => {
+    watchdogTicks++;
+    if (heroVideo.paused) tryPlay();
+    if (watchdogTicks >= 20) clearInterval(watchdog);
+  }, 1000);
+
+  // If it ever stops on its own (a stray external pause, tab throttling,
+  // etc.) start it again automatically — it should never sit still.
+  heroVideo.addEventListener('pause', () => {
+    if (!heroVideo.ended) tryPlay();
+  });
+
+  const resumeEvents = ['click', 'touchstart', 'scroll', 'keydown', 'pointermove'];
+  function resumeOnInteraction() {
+    tryPlay();
+    resumeEvents.forEach(evt => window.removeEventListener(evt, resumeOnInteraction));
+  }
+  resumeEvents.forEach(evt => window.addEventListener(evt, resumeOnInteraction, { passive: true, once: true }));
+})();
 
 // ============ Portfolio category filter ============
 const filterBar = document.querySelector('.portfolio-filters');
